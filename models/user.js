@@ -50,8 +50,8 @@ module.exports = function (sequelize, DataTypes) {
     });
 
     User.belongsToMany(models.Forum, {
-      as: "Peoples",
-      through: "peoples_communication",
+      as: "Readers",
+      through: "readers_communication",
       foreignKey: "userId"
     });
   };
