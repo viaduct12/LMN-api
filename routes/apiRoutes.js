@@ -185,4 +185,11 @@ module.exports = app => {
     });
   })
 
+  app.get("/drop/:category", (req, res) => {
+    const category = req.params.category;
+    db.Article.destroy({ where: {category: category}}).then(result => {
+      res.json("deleted");
+    })
+  })
+
 }
