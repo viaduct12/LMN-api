@@ -1,6 +1,6 @@
 module.exports = (seqeulize, DataTypes) => {
   const Article = seqeulize.define("Article", {
-    categories: {
+    category: {
       type: DataTypes.STRING,
       allowNull: false
     },
@@ -13,7 +13,8 @@ module.exports = (seqeulize, DataTypes) => {
       allowNull: false
     },
     summary: {
-      type: DataTypes.TEXT
+      type: DataTypes.TEXT,
+      allowNull: false
     }
   });
 
