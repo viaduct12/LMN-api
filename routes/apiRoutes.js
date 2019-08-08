@@ -26,7 +26,7 @@ module.exports = app => {
 
   //test route to see all users 
   app.get("/api/users", (req, res) => {
-    db.User.find({}).then(result => {
+    db.User.findAll({}).then(result => {
       res.json(result)
     })
   })
