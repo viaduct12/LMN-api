@@ -4,6 +4,25 @@ const cheerio = require("cheerio");
 
 module.exports = app => {
 
+  //create user
+  app.post("/api/signup", (req, res) => {
+    console.log(req.body, "api sign up");
+    db.User.create({
+      email: req.body.email,
+      password: req.body.password
+    })
+      .then(function () {
+        // console.log("why no redirect! apiRoutes.js");
+        // res.redirect(307, "/api/login");
+        res.status(200).json("user created");
+      })
+      .catch(function (err) {
+        res.status(401).json(err);
+      });
+  });
+
+
+
   //api news articles using categories
   app.get("/api/:categories", (req, res) => {
     const category = req.params.categories;
@@ -11,6 +30,13 @@ module.exports = app => {
       res.json(result);
     })
   });
+
+  //api get all articles
+  app.get("/api/all", (req, res) => {
+    db.Article.findAll({}).then(result => {
+      res.json(result);
+    })
+  })
 
   //scraping bbc
   app.get("/scrape/politics", (req, res) => {
