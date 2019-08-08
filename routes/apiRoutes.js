@@ -8,6 +8,9 @@ module.exports = app => {
   app.post("/api/signup", (req, res) => {
     console.log(req.body, "api sign up");
     db.User.create({
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      username: req.body.username,
       email: req.body.email,
       password: req.body.password
     })
@@ -21,7 +24,12 @@ module.exports = app => {
       });
   });
 
-
+  //test route to see all users 
+  app.get("/api/users", (req, res) => {
+    db.User.find({}).then(result => {
+      res.json(result)
+    })
+  })
 
   //api news articles using categories
   app.get("/api/:categories", (req, res) => {
