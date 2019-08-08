@@ -1,6 +1,7 @@
 const db = require("../models");
 const axios = require("axios");
 const cheerio = require("cheerio");
+const passport = require("../config/passport");
 
 module.exports = app => {
 
@@ -8,20 +9,26 @@ module.exports = app => {
   app.post("/api/signup", (req, res) => {
     console.log(req.body, "api sign up");
     db.User.create({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      username: req.body.username,
-      email: req.body.email,
-      password: req.body.password
+      firstName: req.body.data.firstName,
+      lastName: req.body.data.lastName,
+      username: req.body.data.username,
+      email: req.body.data.email,
+      password: req.body.data.password
     })
       .then(function () {
-        // console.log("why no redirect! apiRoutes.js");
-        // res.redirect(307, "/api/login");
         res.status(200).json("user created");
       })
       .catch(function (err) {
         res.status(401).json(err);
       });
+  });
+
+  app.post("/api/login", passport.authenticate("local"), function (req, res) {
+    console.log("hello");
+    console.log(req.body, "post log in function");
+
+    res.status("200").json("logged in");
+    
   });
 
   //test route to see all users 
@@ -106,7 +113,8 @@ module.exports = app => {
         var result = {};
 
         // Add the text and href of every link, and save them as properties of the result object
-        result.link = $(this)
+        result.link = "https://www.bbc.com" + 
+          $(this)
           .children("header")
           .children("div")
           .children("h3")
@@ -140,16 +148,17 @@ module.exports = app => {
         result.category = "politics";
 
         // Create a new Article using the `result` object built from scraping
-        db.Article.create(result)
-          .then(function (dbArticle) {
-            // View the added result in the console
-            console.log(dbArticle);
-          })
-          .catch(function (err) {
-            // If an error occurred, log it
-            console.log(err);
-          });
-
+        if(result.title != "" && result.summary != ""){
+          db.Article.create(result)
+            .then(function (dbArticle) {
+              // View the added result in the console
+              console.log(dbArticle);
+            })
+            .catch(function (err) {
+              // If an error occurred, log it
+              console.log(err);
+            });
+        }
 
         //dupe check ?
 
