@@ -47,7 +47,7 @@ module.exports = app => {
   });
 
   //api get all articles
-  app.get("/api/all", (req, res) => {
+  app.get("/all", (req, res) => {
     db.Article.findAll({}).then(result => {
       res.json(result);
     })
@@ -238,6 +238,7 @@ module.exports = app => {
     });
   })
 
+  //scraped kotaku and anime news network
   app.get("/scrape/anime_gaming", (req, res) => {
     axios.get("https://kotaku.com/").then(function (response) {
       var $ = cheerio.load(response.data);
@@ -323,7 +324,172 @@ module.exports = app => {
     });
   })
 
+  app.get("/scrape/sports", (req, res) => {
+    axios.get("https://theundefeated.com/sports/").then(function (response) {
+      var $ = cheerio.load(response.data);
+      $("section").each(function (i, element) {
+        var result = {};
+        result.link = $(this)
+          .children("a")
+          .attr("href");
+        result.title = $(this)
+          .children("a")
+          .children("h2")
+          .text();
+        result.summary = $(this)
+          .children("a")
+          .children("p")
+          .text()
+        result.category = "sports";
 
+
+        // if (result.link !== undefined) {
+        //   if (result.link.charAt(8) !== "k") {
+        //     result.link = undefined;
+        //   }
+        // }
+
+        if(result.title !== "" && result.summary !== ""){
+          db.Article.create(result).then((dbArticle) => {
+            // view the added result in the console
+            console.log(dbArticle);
+          }).catch((err) => {
+            console.log(err);
+          });
+        }
+      });
+      // send a message to the client 
+      res.redirect("/");
+    });
+
+  })
+
+  app.get("/scrape/enviroment", (req, res) => {
+    axios.get("https://earther.gizmodo.com/").then(function (response) {
+      var $ = cheerio.load(response.data);
+      $("article").each(function (i, element) {
+        var result = {};
+        result.link = $(this)
+          .children("div")
+          .children("div")
+          .children("a")
+          .attr("href");
+        result.title = $(this)
+          .children("div")
+          .children("div")
+          .children("a")
+          .children("h1")
+          .text();
+        result.summary = $(this)
+          .children("div")
+          .children("div")
+          .children("div")
+          .children("p")
+          .text()
+        result.category = "enviroment";
+
+
+        // if (result.link !== undefined) {
+        //   if (result.link.charAt(8) !== "k") {
+        //     result.link = undefined;
+        //   }
+        // }
+
+        if (result.title !== "" && result.summary !== "") {
+          db.Article.create(result).then((dbArticle) => {
+            // view the added result in the console
+            console.log(dbArticle);
+          }).catch((err) => {
+            console.log(err);
+          });
+        }
+      });
+      // send a message to the client 
+      res.redirect("/");
+    });
+
+  })
+
+  app.get("/scrape/design", (req, res) => {
+    axios.get("https://www.entrepreneur.com/topic/home-decor").then(function (response) {
+      var $ = cheerio.load(response.data);
+      $(".block").each(function (i, element) {
+        var result = {};
+        result.link = $(this)
+          .children("h3")
+          .children("a")
+          .attr("href");
+        result.title = $(this)
+          .children("h3")
+          .children("a")
+          .text();
+        result.summary = $(this)
+          .children("div")
+          .text()
+        result.category = "design";
+
+
+        // if (result.link !== undefined) {
+        //   if (result.link.charAt(8) !== "k") {
+        //     result.link = undefined;
+        //   }
+        // }
+
+        // if (result.title !== "" && result.summary !== "") {
+          db.Article.create(result).then((dbArticle) => {
+            // view the added result in the console
+            console.log(dbArticle);
+          }).catch((err) => {
+            console.log(err);
+          });
+        // }
+      });
+      // send a message to the client 
+      res.redirect("/");
+    });
+
+  })
+
+  app.get("/scrape/media", (req, res) => {
+    axios.get("https://www.independent.ie/style/celebrity/celebrity-news/").then(function (response) {
+      var $ = cheerio.load(response.data);
+      $("article").each(function (i, element) {
+        var result = {};
+        result.link = $(this)
+          .children("a")
+          .attr("href");
+        result.title = $(this)
+          .children("a")
+          .children("h2")
+          .children("span")
+          .text();
+        result.summary = $(this)
+          .children("a")
+          .children("p")
+          .text()
+        result.category = "media";
+
+
+        // if (result.link !== undefined) {
+        //   if (result.link.charAt(8) !== "k") {
+        //     result.link = undefined;
+        //   }
+        // }
+
+        if (result.title !== "" && result.summary !== "") {
+        db.Article.create(result).then((dbArticle) => {
+          // view the added result in the console
+          console.log(dbArticle);
+        }).catch((err) => {
+          console.log(err);
+        });
+        }
+      });
+      // send a message to the client 
+      res.redirect("/");
+    });
+
+  })
 
   app.get("/drop/:category", (req, res) => {
     const category = req.params.category;
