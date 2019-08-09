@@ -3,18 +3,24 @@ module.exports = (seqeulize, DataTypes) => {
     category: {
       type: DataTypes.STRING,
       allowNull: false
+
     },
     title: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
+
     },
     link: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
+
     },
     summary: {
       type: DataTypes.TEXT,
       allowNull: false
+
     }
   });
 

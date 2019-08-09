@@ -53,7 +53,7 @@ module.exports = app => {
     })
   })
 
-  //scraping bbc
+  //scraping bbc and npr
   app.get("/scrape/politics", (req, res) => {
     axios.get("https://www.npr.org/sections/news/").then(function (response) {
       // Then, we load that into cheerio and save it to $ for a shorthand selector
@@ -190,10 +190,9 @@ module.exports = app => {
       res.redirect("/");
     });
 
-
-
   });
 
+  //scraped medium
   app.get("/scrape/technology", (req, res) => {
     axios.get("https://medium.com/topic/technology").then(function (response) {
       var $ = cheerio.load(response.data);
@@ -214,6 +213,17 @@ module.exports = app => {
           .text()
         result.category = "technology";
 
+        
+        if(result.link !== undefined){
+          if(result.link.charAt(0) === "/"){
+            result.link = "https://medium.com" +
+              $(this)
+              .children("h3")
+              .children("a")
+              .attr("href");
+          }
+        }
+
 
         db.Article.create(result).then((dbArticle) => {
           // view the added result in the console
@@ -227,6 +237,93 @@ module.exports = app => {
       res.redirect("/");
     });
   })
+
+  app.get("/scrape/anime_gaming", (req, res) => {
+    axios.get("https://kotaku.com/").then(function (response) {
+      var $ = cheerio.load(response.data);
+      $("article").each(function (i, element) {
+        var result = {};
+        result.link = $(this)
+          .children("div")
+          .children("div")
+          .children("a")
+          .attr("href");
+        result.title = $(this)
+          .children("div")
+          .children("div")
+          .children("a")
+          .children("h1")
+          .text();
+        result.summary = $(this)
+          .children("div")
+          .children("div")
+          .children("div")
+          .children("p")
+          .text()
+        result.category = "anime_gaming";
+
+
+        if (result.link !== undefined) {
+          if (result.link.charAt(8) !== "k") {
+            result.link = undefined;
+          }
+        }
+
+
+        db.Article.create(result).then((dbArticle) => {
+          // view the added result in the console
+          // console.log(dbArticle);
+        }).catch((err) => {
+          // console.log(err);
+        });
+
+      });
+      // send a message to the client 
+      res.redirect("/");
+    });
+
+    axios.get("https://www.animenewsnetwork.com/").then(response => {
+      var $ = cheerio.load(response.data);
+
+      $("div").each(function (i, element) {
+        var result = {};
+        result.link = "https://www.animenewsnetwork.com" + $(this)
+          .children("h3")
+          .children("a")
+          .attr("href");
+        result.title = $(this)
+          .children("h3")
+          .children("a")
+          .text();
+        result.summary = $(this)
+          .children("div")
+          .children("span")
+          .text()
+        result.category = "anime_gaming";
+
+        console.log(result, "my bodyyyyy");
+
+        // if (result.link !== undefined) {
+        //   if (result.link.charAt(8) !== "k") {
+        //     result.link = undefined;
+        //   }
+        // }
+
+
+        db.Article.create(result).then((dbArticle) => {
+          // view the added result in the console
+          // console.log(dbArticle);
+        }).catch((err) => {
+          // console.log(err);
+        });
+
+      });
+      // send a message to the client 
+      res.redirect("/");
+    });
+  })
+
+
 
   app.get("/drop/:category", (req, res) => {
     const category = req.params.category;
