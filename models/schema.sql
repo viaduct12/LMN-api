@@ -2,3 +2,7 @@
 DROP DATABASE IF EXISTS article;
 -- Creates the "article" database --
 CREATE DATABASE article;
+
+DROP DATABASE IF EXISTS youtube;
+
+CREATE DATABASE youtube;
