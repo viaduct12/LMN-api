@@ -27,12 +27,12 @@ module.exports = app => {
     console.log("hello");
     console.log(req.body, "post log in function");
 
-    res.status("200").json("logged in");
+    res.status( "200").json("logged in");
     
   });
 
   //test route to see all users 
-  app.get("/api/users", (req, res) => {
+  app.get("/all/users", (req, res) => {
     db.User.findAll({}).then(result => {
       res.json(result)
     })
@@ -302,22 +302,14 @@ module.exports = app => {
           .text()
         result.category = "anime_gaming";
 
-        console.log(result, "my bodyyyyy");
-
-        // if (result.link !== undefined) {
-        //   if (result.link.charAt(8) !== "k") {
-        //     result.link = undefined;
-        //   }
-        // }
-
-
-        db.Article.create(result).then((dbArticle) => {
-          // view the added result in the console
-          // console.log(dbArticle);
-        }).catch((err) => {
-          // console.log(err);
-        });
-
+        if (result.title !== "" && result.summary !== "") {
+          db.Article.create(result).then((dbArticle) => {
+            // view the added result in the console
+            // console.log(dbArticle);
+          }).catch((err) => {
+            // console.log(err);
+          });
+        }
       });
       // send a message to the client 
       res.redirect("/");
