@@ -1,8 +1,42 @@
 const db = require("../models");
 const axios = require("axios");
 const cheerio = require("cheerio");
+const passport = require("../config/passport");
 
 module.exports = app => {
+
+  //create user
+  app.post("/api/signup", (req, res) => {
+    console.log(req.body, "api sign up");
+    db.User.create({
+      firstName: req.body.data.firstName,
+      lastName: req.body.data.lastName,
+      username: req.body.data.username,
+      email: req.body.data.email,
+      password: req.body.data.password
+    })
+      .then(function () {
+        res.status(200).json("user created");
+      })
+      .catch(function (err) {
+        res.status(401).json(err);
+      });
+  });
+
+  app.post("/api/login", passport.authenticate("local"), function (req, res) {
+    console.log("hello");
+    console.log(req.body, "post log in function");
+
+    res.status( "200").json("logged in");
+    
+  });
+
+  //test route to see all users 
+  app.get("/all/users", (req, res) => {
+    db.User.findAll({}).then(result => {
+      res.json(result)
+    })
+  })
 
   //api news articles using categories
   app.get("/api/:categories", (req, res) => {
@@ -12,7 +46,14 @@ module.exports = app => {
     })
   });
 
-  //scraping bbc
+  //api get all articles
+  app.get("/all", (req, res) => {
+    db.Article.findAll({}).then(result => {
+      res.json(result);
+    })
+  })
+
+  //scraping bbc and npr
   app.get("/scrape/politics", (req, res) => {
     axios.get("https://www.npr.org/sections/news/").then(function (response) {
       // Then, we load that into cheerio and save it to $ for a shorthand selector
@@ -72,7 +113,8 @@ module.exports = app => {
         var result = {};
 
         // Add the text and href of every link, and save them as properties of the result object
-        result.link = $(this)
+        result.link = "https://www.bbc.com" + 
+          $(this)
           .children("header")
           .children("div")
           .children("h3")
@@ -106,16 +148,17 @@ module.exports = app => {
         result.category = "politics";
 
         // Create a new Article using the `result` object built from scraping
-        db.Article.create(result)
-          .then(function (dbArticle) {
-            // View the added result in the console
-            console.log(dbArticle);
-          })
-          .catch(function (err) {
-            // If an error occurred, log it
-            console.log(err);
-          });
-
+        if(result.title != "" && result.summary != ""){
+          db.Article.create(result)
+            .then(function (dbArticle) {
+              // View the added result in the console
+              console.log(dbArticle);
+            })
+            .catch(function (err) {
+              // If an error occurred, log it
+              console.log(err);
+            });
+        }
 
         //dupe check ?
 
@@ -147,10 +190,9 @@ module.exports = app => {
       res.redirect("/");
     });
 
-
-
   });
 
+  //scraped medium
   app.get("/scrape/technology", (req, res) => {
     axios.get("https://medium.com/topic/technology").then(function (response) {
       var $ = cheerio.load(response.data);
@@ -171,6 +213,17 @@ module.exports = app => {
           .text()
         result.category = "technology";
 
+        
+        if(result.link !== undefined){
+          if(result.link.charAt(0) === "/"){
+            result.link = "https://medium.com" +
+              $(this)
+              .children("h3")
+              .children("a")
+              .attr("href");
+          }
+        }
+
 
         db.Article.create(result).then((dbArticle) => {
           // view the added result in the console
@@ -183,6 +236,251 @@ module.exports = app => {
       // send a message to the client 
       res.redirect("/");
     });
+  })
+
+  //scraped kotaku and anime news network
+  app.get("/scrape/anime_gaming", (req, res) => {
+    axios.get("https://kotaku.com/").then(function (response) {
+      var $ = cheerio.load(response.data);
+      $("article").each(function (i, element) {
+        var result = {};
+        result.link = $(this)
+          .children("div")
+          .children("div")
+          .children("a")
+          .attr("href");
+        result.title = $(this)
+          .children("div")
+          .children("div")
+          .children("a")
+          .children("h1")
+          .text();
+        result.summary = $(this)
+          .children("div")
+          .children("div")
+          .children("div")
+          .children("p")
+          .text()
+        result.category = "anime_gaming";
+
+
+        if (result.link !== undefined) {
+          if (result.link.charAt(8) !== "k") {
+            result.link = undefined;
+          }
+        }
+
+
+        db.Article.create(result).then((dbArticle) => {
+          // view the added result in the console
+          // console.log(dbArticle);
+        }).catch((err) => {
+          // console.log(err);
+        });
+
+      });
+      // send a message to the client 
+      res.redirect("/");
+    });
+
+    axios.get("https://www.animenewsnetwork.com/").then(response => {
+      var $ = cheerio.load(response.data);
+
+      $("div").each(function (i, element) {
+        var result = {};
+        result.link = "https://www.animenewsnetwork.com" + $(this)
+          .children("h3")
+          .children("a")
+          .attr("href");
+        result.title = $(this)
+          .children("h3")
+          .children("a")
+          .text();
+        result.summary = $(this)
+          .children("div")
+          .children("span")
+          .text()
+        result.category = "anime_gaming";
+
+        if (result.title !== "" && result.summary !== "") {
+          db.Article.create(result).then((dbArticle) => {
+            // view the added result in the console
+            // console.log(dbArticle);
+          }).catch((err) => {
+            // console.log(err);
+          });
+        }
+      });
+      // send a message to the client 
+      res.redirect("/");
+    });
+  })
+
+  app.get("/scrape/sports", (req, res) => {
+    axios.get("https://theundefeated.com/sports/").then(function (response) {
+      var $ = cheerio.load(response.data);
+      $("section").each(function (i, element) {
+        var result = {};
+        result.link = $(this)
+          .children("a")
+          .attr("href");
+        result.title = $(this)
+          .children("a")
+          .children("h2")
+          .text();
+        result.summary = $(this)
+          .children("a")
+          .children("p")
+          .text()
+        result.category = "sports";
+
+
+        // if (result.link !== undefined) {
+        //   if (result.link.charAt(8) !== "k") {
+        //     result.link = undefined;
+        //   }
+        // }
+
+        if(result.title !== "" && result.summary !== ""){
+          db.Article.create(result).then((dbArticle) => {
+            // view the added result in the console
+            console.log(dbArticle);
+          }).catch((err) => {
+            console.log(err);
+          });
+        }
+      });
+      // send a message to the client 
+      res.redirect("/");
+    });
+
+  })
+
+  app.get("/scrape/enviroment", (req, res) => {
+    axios.get("https://earther.gizmodo.com/").then(function (response) {
+      var $ = cheerio.load(response.data);
+      $("article").each(function (i, element) {
+        var result = {};
+        result.link = $(this)
+          .children("div")
+          .children("div")
+          .children("a")
+          .attr("href");
+        result.title = $(this)
+          .children("div")
+          .children("div")
+          .children("a")
+          .children("h1")
+          .text();
+        result.summary = $(this)
+          .children("div")
+          .children("div")
+          .children("div")
+          .children("p")
+          .text()
+        result.category = "enviroment";
+
+
+        // if (result.link !== undefined) {
+        //   if (result.link.charAt(8) !== "k") {
+        //     result.link = undefined;
+        //   }
+        // }
+
+        if (result.title !== "" && result.summary !== "") {
+          db.Article.create(result).then((dbArticle) => {
+            // view the added result in the console
+            console.log(dbArticle);
+          }).catch((err) => {
+            console.log(err);
+          });
+        }
+      });
+      // send a message to the client 
+      res.redirect("/");
+    });
+
+  })
+
+  app.get("/scrape/design", (req, res) => {
+    axios.get("https://www.entrepreneur.com/topic/home-decor").then(function (response) {
+      var $ = cheerio.load(response.data);
+      $(".block").each(function (i, element) {
+        var result = {};
+        result.link = $(this)
+          .children("h3")
+          .children("a")
+          .attr("href");
+        result.title = $(this)
+          .children("h3")
+          .children("a")
+          .text();
+        result.summary = $(this)
+          .children("div")
+          .text()
+        result.category = "design";
+
+
+        // if (result.link !== undefined) {
+        //   if (result.link.charAt(8) !== "k") {
+        //     result.link = undefined;
+        //   }
+        // }
+
+        // if (result.title !== "" && result.summary !== "") {
+          db.Article.create(result).then((dbArticle) => {
+            // view the added result in the console
+            console.log(dbArticle);
+          }).catch((err) => {
+            console.log(err);
+          });
+        // }
+      });
+      // send a message to the client 
+      res.redirect("/");
+    });
+
+  })
+
+  app.get("/scrape/media", (req, res) => {
+    axios.get("https://www.independent.ie/style/celebrity/celebrity-news/").then(function (response) {
+      var $ = cheerio.load(response.data);
+      $("article").each(function (i, element) {
+        var result = {};
+        result.link = $(this)
+          .children("a")
+          .attr("href");
+        result.title = $(this)
+          .children("a")
+          .children("h2")
+          .children("span")
+          .text();
+        result.summary = $(this)
+          .children("a")
+          .children("p")
+          .text()
+        result.category = "media";
+
+
+        // if (result.link !== undefined) {
+        //   if (result.link.charAt(8) !== "k") {
+        //     result.link = undefined;
+        //   }
+        // }
+
+        if (result.title !== "" && result.summary !== "") {
+        db.Article.create(result).then((dbArticle) => {
+          // view the added result in the console
+          console.log(dbArticle);
+        }).catch((err) => {
+          console.log(err);
+        });
+        }
+      });
+      // send a message to the client 
+      res.redirect("/");
+    });
+
   })
 
   app.get("/drop/:category", (req, res) => {

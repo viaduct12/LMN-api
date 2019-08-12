@@ -4,5 +4,9 @@ module.exports = app => {
     res.json("Hello World!");
   });
 
-  
+  app.get("/logout", function (req, res) {
+    req.logout();
+    res.redirect("/");
+  });
+
 }

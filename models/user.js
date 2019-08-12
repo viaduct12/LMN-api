@@ -1,7 +1,8 @@
 // Requiring bcrypt for password hashing. Using the bcryptjs version as the regular bcrypt module sometimes causes errors on Windows machines
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-// For testing purposes allowed some answers to be null. mh
+// For testing purposes allowed some answers to be null.
 module.exports = function (sequelize, DataTypes) {
   const User = sequelize.define("User", {
     email: {
@@ -22,6 +23,14 @@ module.exports = function (sequelize, DataTypes) {
     username: {
       type: DataTypes.STRING,
       unique: true
+    },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false
     }
   });
 
