@@ -18,7 +18,7 @@ router.post("/signup", (req, res, next) => {
   };
 
   db.User.create(newUser, (err, data) => {
-    // console.log(data.id, data.username, "inside user creation");
+    console.log(data, "inside user creation");
     if(err) console.log(err);
 
     const token = jwt.sign({

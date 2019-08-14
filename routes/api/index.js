@@ -9,7 +9,7 @@ router.use("/auth", userRoutes);
 // Register book routes
 router.use("/article", scrapeRoutes);
 
-// router.use("/forum", forumRoutes);
+router.use("/forum", forumRoutes);
 
 router.use("/post", postRoutes);
 module.exports = router;

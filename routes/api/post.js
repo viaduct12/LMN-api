@@ -17,10 +17,10 @@ description: req.body.description
   }).catch(err => console.log(err))
 });
 
-
-router.get("/get", (req, res) => {
-  console.log(req.category);
-  const getByCat = req.category;
+//api/post/get
+router.get("/get/:category", (req, res) => {
+  // console.log("hello", req);
+  const getByCat = req.params.category;
 
   db.Post.findAll({
     where: {category : getByCat}

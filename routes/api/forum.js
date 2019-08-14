@@ -10,4 +10,4 @@ router.get("/:category", (req, res) => {
 });
 
 
-
+module.exports = router;
