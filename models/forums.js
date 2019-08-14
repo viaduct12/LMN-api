@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Forum.associate = models => {
-    Forum.hasMany(models.Post, {
+    Forum.hasOne(models.Post, {
       as: "Category",
       through: "category_topic",
       foreignKey: "postId"

@@ -24,13 +24,13 @@ description: {
 
   });
 
-Post.associate = models => {
-  Post.hasMany(models.Forum, {
-    as: "Topic",
-    through: "category_topic",
-    foreignKey: "forumId"
-  });
-} 
+// Post.associate = models => {
+//   Post.belongsToMany(models.Forum, {
+//     as: "Topic",
+//     through: "category_topic",
+//     foreignKey: "forumId"
+//   });
+// } 
 
   return Post;
 }
