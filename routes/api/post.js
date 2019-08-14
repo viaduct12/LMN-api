@@ -29,5 +29,15 @@ router.get("/get/:category", (req, res) => {
   }).catch(err => console.log(err))
 });
 
+router.get("/get/:category/:id" , (req, res) => {
+  const cat = req.params.category;
+  const postId = req.params.id;
+
+  db.Post.findOne({where: [{category: cat}, {id: postId}]
+  }).then(result => {
+    res.json(result);
+  }).catch(err => console.log(err));
+})
+
 module.exports = router;
 

@@ -3,6 +3,7 @@ const scrapeRoutes = require('./scrape');
 const userRoutes = require("./userAuth");
 const forumRoutes = require("./forum");
 const postRoutes = require("./post");
+const commentRoutes = require("./comment");
 // Register public auth api routes
 router.use("/auth", userRoutes);
 
@@ -12,4 +13,6 @@ router.use("/article", scrapeRoutes);
 router.use("/forum", forumRoutes);
 
 router.use("/post", postRoutes);
+
+router.use("/comment", commentRoutes);
 module.exports = router;
