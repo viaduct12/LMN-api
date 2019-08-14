@@ -2,3 +2,5 @@
 DROP DATABASE IF EXISTS article;
 -- Creates the "article" database --
 CREATE DATABASE article;
+
+
