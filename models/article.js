@@ -1,5 +1,5 @@
-module.exports = (seqeulize, DataTypes) => {
-  const Article = seqeulize.define("Article", {
+module.exports = (sequelize, DataTypes) => {
+  const Article = sequelize.define("Article", {
     category: {
       type: DataTypes.STRING,
       allowNull: false
