@@ -8,7 +8,7 @@ const db = require("../../models");
 
 
 router.post("/signup", (req, res, next) => {
-
+  // console.log(req.body, "inside sign up");
   const newUser = {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -18,7 +18,7 @@ router.post("/signup", (req, res, next) => {
   };
 
   db.User.create(newUser, (err, data) => {
-    console.log(data.id, data.username, "inside user creation");
+    // console.log(data.id, data.username, "inside user creation");
     if(err) console.log(err);
 
     const token = jwt.sign({
@@ -38,11 +38,11 @@ router.post("/signup", (req, res, next) => {
   });
 
 router.post("/login", (req, res) => {
-  console.log(req.body)
+  // console.log(req.body, "post userAuth.js");
 
-  db.User.findOne({ where: { username: req.body.username } }).then(result => {
+  db.User.findOne({ where: { email: req.body.email } }).then(result => {
 
-    if (bcrypt.compareSync(req.body.password, res.password)) {
+    if (bcrypt.compareSync(req.body.password, result.password)) {
 
       const token = jwt.sign({
         userId: result.id,
