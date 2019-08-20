@@ -445,6 +445,17 @@ router.get("/scrape/design", (req, res) => {
         .text()
       result.category = "design";
 
+      if (result.link !== undefined) {
+        if (result.link.charAt(0) === "/") {
+          result.link = "https://www.entrepreneur.com" +
+            $(this)
+              .children("h3")
+              .children("a")
+              .attr("href");
+        }
+      }
+
+
       // if (result.title !== "" && result.summary !== "") {
       db.Article.create(result).then((dbArticle) => {
         // view the added result in the console
@@ -471,7 +482,7 @@ router.get("/scrape/design", (req, res) => {
         .children("a")
         .text();
       result.summary = $(this)
-        .children("dboom-excerpt")
+        .children(".dboom-excerpt")
         .text()
       result.category = "design";
 

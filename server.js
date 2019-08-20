@@ -16,8 +16,8 @@ app.use('*', (req, res, next) => {
   console.log(req);
   next();
 })
-app.use(cors({origin:true}));
-
+// app.use(cors({origin:true}));
+app.use(cors());
 app.use(routes);
 app.use(express.static("public"));
 
