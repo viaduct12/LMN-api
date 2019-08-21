@@ -17,6 +17,15 @@ description: req.body.description
   }).catch(err => console.log(err))
 });
 
+//api/post/all  for testing
+router.get("/all", (req, res) => {
+  
+  db.Post.findAll({}).then(result => {
+    res.json(result);
+  }).catch(err => console.log(err))
+})
+
+
 //api/post/get
 router.get("/get/:category", (req, res) => {
   // console.log("hello", req);
@@ -29,7 +38,7 @@ router.get("/get/:category", (req, res) => {
   }).catch(err => console.log(err))
 });
 
-router.get("/get/:category/:id" , (req, res) => {
+router.get("/get/:category/:id", (req, res) => {
   const cat = req.params.category;
   const postId = req.params.id;
 
@@ -38,6 +47,24 @@ router.get("/get/:category/:id" , (req, res) => {
     res.json(result);
   }).catch(err => console.log(err));
 })
+
+router.get("/get/recent", (req, res) => {
+  const recentPost = [];
+  const categories = ["announcements", "anime_gaming", "charities", "desing", "enviroment", "media", "movements", "politics", "podcasts", "sports", "technology"];
+  const index = 0;
+  categories.map(category => {
+    db.Post.findAll({
+      where: [{category: category}],
+      order: ["createdAt", "DSC"]
+    }).then(result => {
+
+      console.log(result, index);
+      index++;
+    }).catch(err => console.log(err));
+  })
+
+})
+
 
 module.exports = router;
 
