@@ -48,21 +48,35 @@ router.get("/get/:category/:id", (req, res) => {
   }).catch(err => console.log(err));
 })
 
-router.get("/get/recent", (req, res) => {
+router.get("/recent", (req, res) => {
   const recentPost = [];
   const categories = ["announcements", "anime_gaming", "charities", "desing", "enviroment", "media", "movements", "politics", "podcasts", "sports", "technology"];
-  const index = 0;
-  categories.map(category => {
-    db.Post.findAll({
-      where: [{category: category}],
-      order: ["createdAt", "DSC"]
-    }).then(result => {
+  // const categories = ["announcements", "anime_gaming"];
 
-      console.log(result, index);
-      index++;
-    }).catch(err => console.log(err));
-  })
+  // const findRecentPost = categoryPost => {
+  //   return Promise.resolve("ok");
+  // };
+  
 
+
+  const getData = async () => {
+    return await Promise.all(categories.map(category => {
+      db.Post.findAll({
+        where: [{category: category}],
+        order: [
+          ["createdAt", "DESC"]
+        ]
+      }).then(result => {
+        if (result[0] !== undefined){
+          recentPost.push(result[0].dataValues);
+        } 
+      }).catch(err => console.log(err));
+    }))
+  }
+
+  const stuff = getData();
+  console.log(stuff, "does it work?", recentPost);
+  res.json(recentPost);
 })
 
 
