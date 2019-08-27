@@ -6,4 +6,6 @@ const jwtMiddleware = expressJWT({
   secret: process.env.JWT_SECRET, // get jwt secret from environment variable
 });
 
+// console.log(jwtMiddleware, "my secret");
+
 module.exports = jwtMiddleware;

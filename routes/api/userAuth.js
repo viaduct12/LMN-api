@@ -17,9 +17,7 @@ router.post("/signup", (req, res, next) => {
     password: req.body.password
   };
 
-  db.User.create(newUser, (err, data) => {
-    console.log(data, "inside user creation");
-    if(err) console.log(err);
+  db.User.create(newUser).then(data => {
 
     const token = jwt.sign({
       userId: data.id,
@@ -27,13 +25,19 @@ router.post("/signup", (req, res, next) => {
       fullName: `${data.firstName} ${data.lastName}`,
     }, process.env.JWT_SECRET);
 
+    console.log(token, "what is my token?")
     const result = {
       ...data,
       token
     };
 
-    return res.json(result);
-    });
+    return res.json(newUser);
+    }).catch(err => {
+      if (err) {
+        console.log(err);
+        return res.json({ error: err.message });
+      }
+    })
 
   });
 

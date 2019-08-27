@@ -170,7 +170,7 @@ router.get("/scrape/technology", (req, res) => {
 
       db.Article.create(result).then((dbArticle) => {
         // view the added result in the console
-        console.log(dbArticle);
+        // console.log(dbArticle);
       }).catch((err) => {
         console.log(err);
       });
@@ -182,16 +182,21 @@ router.get("/scrape/technology", (req, res) => {
 
   axios.get("https://techcrunch.com/").then(function (response) {
     var $ = cheerio.load(response.data);
-    $(".post-block_title").each(function (i, element) {
+    $(".post-block").each(function (i, element) {
       var result = {};
       result.link = $(this)
+        .children("header")
+        .children("h2")
         .children("a")
         .attr("href");
       result.title = $(this)
+        .children("header")
+        .children("h2")
         .children("a")
         .text();
       result.summary = $(this)
-        .children("a")
+        .children("div")
+        // .children("a")
         .text()
       result.category = "technology";
 
@@ -343,6 +348,16 @@ router.get("/scrape/sports", (req, res) => {
       .children("span") 
       .text();
       result.category = "sports";
+
+      if (result.link !== undefined) {
+        if (result.link.charAt(0) === "/") {
+          result.link = "https://www.usatoday.com" +
+            $(this)
+              // .children("h3")
+              // .children("a")
+              .attr("href");
+        }
+      }
 
       if (result.title !== "" && result.summary !== "") {
         db.Article.create(result).then((dbArticle) => {
@@ -498,8 +513,6 @@ router.get("/scrape/design", (req, res) => {
     // send a message to the client 
     res.redirect("/");
   });
-
-
 })
 
 router.get("/scrape/media", (req, res) => {
@@ -534,6 +547,8 @@ router.get("/scrape/media", (req, res) => {
     res.redirect("/");
   });
 
+
+  //couldn't get to work
   axios.get("https://m.eonline.com/news").then(function (response) {
     var $ = cheerio.load(response.data);
     $(".categorygrid__griditem categorygrid__griditem--small").each(function (i, element) {
@@ -658,94 +673,6 @@ router.get("/scrape/finance", (req, res) => {
 
 })
 
-
-// router.get("/scrape/finance", (req, res) => {
-//   axios.get("https://www.marketwatch.com/").then(function (response) {
-//     var $ = cheerio.load(response.data);
-//     $(".element1 element--article ").each(function (i, element) {
-//       var result = {};
-//       result.link = $(this)
-//         .children("div")
-//         .children(".article__content")
-//         .children(".article__headline")
-//         .children("a")
-//         .attr("href");
-
-//       result.title = $(this)
-//         .children("div")
-//         .children(".article__content")
-//         .children(".article__headline")
-//         .children("a")
-//         .text();
-//       result.summary = $(this)
-//         .children("div")
-//         .children(".article__content")
-//         .children(".article--secondary")
-//         .children(".list list--bullets")
-//         .children(".list__item")
-//         .children("a")
-//         .text()
-//       result.category = "finance";
-
-//       if (result.title !== "" && result.summary !== "") {
-//         db.Article.create(result).then((dbArticle) => {
-//           // view the added result in the console
-//           console.log(dbArticle);
-//         }).catch((err) => {
-//           console.log(err);
-//         });
-//       }
-//     });
-//     // send a message to the client 
-//     res.redirect("/");
-//   });
-
-//   axios.get("https://www.ft.com/markets").then(function (response) {
-//     var $ = cheerio.load(response.data);
-//     $(".css-grid__item-top ").each(function (i, element) {
-//       var result = {};
-//       result.link = $(this)
-//         .children(".o-grid-row")
-//         .children(".js-track-scroll-event")
-//         .children(".o-teaser-collection")
-//         .children(".o-teaser o-teaser--article o-teaser--large o-teaser--has-image js-teaser")
-//         .children(".o-teaser__heading")
-//         .children("a")
-//         .attr("href");
-//       result.title = $(this)
-//         .children(".o-grid-row")
-//         .children(".js-track-scroll-event")
-//         .children(".o-teaser-collection")
-//         .children(".o-teaser o-teaser--article o-teaser--large o-teaser--has-image js-teaser")
-//         .children(".o-teaser__heading")
-//         .children("a")
-//         .text();
-//       result.summary = $(this)
-//       .children(".o-grid-row")
-//       .children(".js-track-scroll-event")
-//       .children(".o-teaser-collection")
-//       .children(".o-teaser o-teaser--article o-teaser--large o-teaser--has-image js-teaser")
-//       .children(".o-teaser__standfirst")
-//       .children("a")
-//       .text();
-      
-//       result.category = "finance";
-
-//       if (result.title !== "" && result.summary !== "") {
-//         db.Article.create(result).then((dbArticle) => {
-//           // view the added result in the console
-//           console.log(dbArticle);
-//         }).catch((err) => {
-//           console.log(err);
-//         });
-//       }
-//     });
-//     // send a message to the client 
-//     res.redirect("/");
-//   });
-
-// })
-
 router.get("/scrape/movements", (req, res) => {
   axios.get("https://www.cfr.org/politics-and-government/political-movements").then(function (response) {
     var $ = cheerio.load(response.data);
@@ -818,6 +745,10 @@ router.get("/scrape/charities", (req, res) => {
   });
 
 
+})
+
+router.get("/update", (req, res) => {
+  db.Article.findAll({where: {created}})
 })
 
 router.get("/drop/:category", (req, res) => {

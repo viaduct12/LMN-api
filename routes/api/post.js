@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const db = require('../../models');
+const jwtMiddleware = require("../../config/jwt-middleware/auth-middleware");
 
 // api forum using all the categories 
 router.post("/create", (req, res) => {
@@ -52,12 +53,6 @@ router.get("/get/:category/:id", (req, res) => {
 router.get("/recent", (req, res) => {
   const recentPost = [];
   const categories = ["announcements", "anime_gaming", "charities", "desing", "enviroment", "media", "movements", "politics", "podcasts", "sports", "technology"];
-  // const categories = ["announcements", "anime_gaming"];
-
-  // const findRecentPost = categoryPost => {
-  //   return Promise.resolve("ok");
-  // };
-
 
   const posts = categories.map(category => {
     return db.Post.findAll({
@@ -75,7 +70,7 @@ router.get("/recent", (req, res) => {
   Promise.all(posts).then(results => {
     res.json(recentPost);
   });
-  // console.log(getData, "does it work?");
+
 })
 
 
