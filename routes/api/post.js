@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const db = require('../../models');
-const jwtMiddleware = require("../../config/jwt-middleware/auth-middleware");
+// const jwtMiddleware = require("../../config/jwt-middleware/auth-middleware");
 
 // api forum using all the categories 
 router.post("/create", (req, res) => {
