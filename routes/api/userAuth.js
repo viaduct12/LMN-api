@@ -25,13 +25,12 @@ router.post("/signup", (req, res, next) => {
       fullName: `${data.firstName} ${data.lastName}`,
     }, process.env.JWT_SECRET);
 
-    console.log(token, "what is my token?")
     const result = {
-      ...data,
+      data,
       token
     };
 
-    return res.json(newUser);
+    return res.json(result);
     }).catch(err => {
       if (err) {
         console.log(err);

@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const db = require('../../models');
-// const jwtMiddleware = require("../../config/jwt-middleware/auth-middleware");
+const jwtMiddleware = require("../../config/jwt-middleware/auth-middleware");
 
 // api forum using all the categories 
 router.post("/create", (req, res) => {
@@ -33,7 +33,10 @@ router.get("/get/:category", (req, res) => {
   const getByCat = req.params.category;
 
   db.Post.findAll({
-    where: { category: getByCat }
+    where: [{ category: getByCat }],
+    order: [
+      ["createdAt", "DESC"]
+    ]
   }).then(result => {
     res.json(result);
   }).catch(err => console.log(err))
