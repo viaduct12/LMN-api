@@ -4,6 +4,7 @@ const userRoutes = require("./userAuth");
 const forumRoutes = require("./forum");
 const postRoutes = require("./post");
 const commentRoutes = require("./comment");
+const testRoutes = require("./skyscanner");
 // Register public auth api routes
 router.use("/auth", userRoutes);
 
@@ -15,4 +16,6 @@ router.use("/forum", forumRoutes);
 router.use("/post", postRoutes);
 
 router.use("/comment", commentRoutes);
+
+router.use("/test", testRoutes);
 module.exports = router;
