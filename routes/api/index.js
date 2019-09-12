@@ -17,5 +17,5 @@ router.use("/post", postRoutes);
 
 router.use("/comment", commentRoutes);
 
-router.use("/test", testRoutes);
+router.use("/flight", testRoutes);
 module.exports = router;

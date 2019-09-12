@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const request = require("request");
 
-router.post("/testing", (req, res) => {
+router.post("/pricing", (req, res) => {
   // console.log(req.body[0], "what is being sent?");
   if(req.body[0].origin !== '' && req.body[0].destination !== ''){
     const options = {
