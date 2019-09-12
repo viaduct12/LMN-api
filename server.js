@@ -16,7 +16,7 @@ app.use('*', (req, res, next) => {
   console.log(req);
   next();
 })
-app.use(cors({origin:false}));
+app.use(cors({origin:true}));
 // const corsOptions ={
 //   origin: "https://viaduct12.github.io/project-3/",
 //   optionsSuccessStatus: 200
