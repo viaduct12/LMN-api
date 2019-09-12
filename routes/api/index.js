@@ -6,7 +6,7 @@ const postRoutes = require("./post");
 const commentRoutes = require("./comment");
 const testRoutes = require("./skyscanner");
 // Register public auth api routes
-router.use("/auth", userRoutes);
+// router.use("/auth", userRoutes);
 
 // Register book routes
 router.use("/article", scrapeRoutes);
