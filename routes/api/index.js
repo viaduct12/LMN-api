@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const scrapeRoutes = require('./scrape');
-const userRoutes = require("./userAuth");
+// const userRoutes = require("./userAuth");
 const forumRoutes = require("./forum");
 const postRoutes = require("./post");
 const commentRoutes = require("./comment");
