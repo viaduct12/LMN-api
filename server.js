@@ -16,13 +16,13 @@ app.use('*', (req, res, next) => {
   console.log(req);
   next();
 })
-// app.use(cors({origin:true}));
+app.use(cors({origin:true}));
 // const corsOptions ={
 //   origin: "https://viaduct12.github.io/project-3/",
 //   optionsSuccessStatus: 200
 // }
 // app.use(cors(corsOptions));
-app.use(cors());
+// app.use(cors());
 app.use(routes);
 app.use(express.static("public"));
 
