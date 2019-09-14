@@ -3,6 +3,7 @@ const request = require("request");
 
 router.post("/pricing", (req, res) => {
   // console.log(req.body[0], "what is being sent?");
+  const destCode = req.body[0].destination;
   if(req.body[0].origin !== '' && req.body[0].destination !== ''){
     const options = {
       method: 'POST',
@@ -13,7 +14,7 @@ router.post("/pricing", (req, res) => {
         'content-type': 'application/x-www-form-urlencoded'
       },
       form: {
-        inboundDate: '2019-11-11',
+        inboundDate: req.body[0].return,
         cabinClass: 'economy',
         children: '0',
         infants: '0',
@@ -22,7 +23,7 @@ router.post("/pricing", (req, res) => {
         locale: 'en-US',
         originPlace: req.body[0].origin + '-sky',
         destinationPlace: req.body[0].destination + '-sky',
-        outboundDate: '2019-11-07',
+        outboundDate: req.body[0].departure,
         adults: '1'
       }
     };
@@ -47,8 +48,10 @@ router.post("/pricing", (req, res) => {
 
       request(secondOptions, function (error, response, body) {
         if (error) throw new Error(error);
-        const jsonBody = JSON.parse(body)
-        // console.log(body);
+
+        const jsonBody = JSON.parse(body);
+
+        console.log(jsonBody);
         res.json(jsonBody);
       });
 
