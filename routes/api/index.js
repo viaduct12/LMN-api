@@ -1,12 +1,12 @@
 const router = require("express").Router();
 const scrapeRoutes = require('./scrape');
-// const userRoutes = require("./userAuth");
+const userRoutes = require("./userAuth");
 const forumRoutes = require("./forum");
 const postRoutes = require("./post");
 const commentRoutes = require("./comment");
 const testRoutes = require("./skyscanner");
 // Register public auth api routes
-// router.use("/auth", userRoutes);
+router.use("/auth", userRoutes);
 
 // Register book routes
 router.use("/article", scrapeRoutes);
